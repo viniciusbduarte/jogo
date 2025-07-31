@@ -17,6 +17,7 @@ SpriteView::SpriteView(SpriteBase &spbase, int lin, int col, int height, int wid
 	
 	moveTo(lin, col);
 }
+
 void SpriteView::moveTo(int l, int c)
 {
 	limits.clear();
@@ -24,16 +25,14 @@ void SpriteView::moveTo(int l, int c)
 	lin = l;
 	col = c;
 	
-	for (int i = 0; i < std::min(height, spbase.getAltura() - lin); i++)
+	for (int i{} ; i < std::min(height, spbase.getAltura() - lin ) ; i++)
 	{
-			unsigned realWidth = spbase.getLimits()[lin + i].largLinha;
-			limits.push_back(
-				LIMITS{
-					std::max(c, 0),
-					std::min(c + width - 1, static_cast<int>(realWidth) - 1),
-					realWidth
-				}
-			);
+		limits.push_back( 
+			LIMITS{ std::max(c, 0),
+					std::min(c + width - 1, static_cast<int> (spbase.getLimits()[lin + i].largLinha) - 1),
+					width
+			}
+		);
 		
 		colorHandler.pushCorLinha(limits.back().front, limits.back().end + 1);
 	}
