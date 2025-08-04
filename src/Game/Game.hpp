@@ -9,20 +9,23 @@
 
 class Game {
 private:
-    static constexpr int CAM_HEIGHT = 24;
-    static constexpr int CAM_WIDTH = 80;
-
-    Sprite mapa;
+    static constexpr int CAM_HEIGHT = 96;
+    static constexpr int CAM_WIDTH = 320;
+ 
+    Sprite mapa; 
+    Sprite sprite_menu;
     SpriteView camera;
     SpriteBuffer screen;
     Hero hero;
     InputHandler input;
 
     int cameraLin, cameraCol;
-    bool running;
+    bool running; 
+    bool menu_running;
 
 public:
     Game();
+    void menu();
     void init();
     void update();
     void render();
