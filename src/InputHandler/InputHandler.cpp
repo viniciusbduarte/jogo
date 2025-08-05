@@ -1,5 +1,10 @@
 #include "InputHandler.hpp"
 
+// Novo construtor que ativa modo não bloqueante
+InputHandler::InputHandler() {
+    Keyboard::setMode(Keyboard::NONBLOCKING);
+}
+
 char InputHandler::readKey() const {
     return Keyboard::read();
 }

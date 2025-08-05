@@ -3,6 +3,7 @@
 
 #include "../../ASCII_Engine/SpriteBuffer.hpp"
 #include "../../ASCII_Engine/SpriteView.hpp"
+#include "../../ASCII_Engine/ObjetoDeJogo.hpp"
 #include "../../ASCII_Engine/Sprite.hpp"
 #include "../classes/Hero.hpp"
 #include "../InputHandler/InputHandler.hpp"
@@ -11,8 +12,9 @@ class Game {
 private:
     static constexpr int CAM_HEIGHT = 96;
     static constexpr int CAM_WIDTH = 320;
- 
-    Sprite mapa; 
+
+    Sprite mapa;
+    ObjetoDeJogo mapa_colisao;
     Sprite sprite_menu;
     SpriteView camera;
     SpriteBuffer screen;
@@ -20,8 +22,10 @@ private:
     InputHandler input;
 
     int cameraLin, cameraCol;
-    bool running; 
+    bool running;
     bool menu_running;
+    bool pulando;
+    int pulo;
 
 public:
     Game();
