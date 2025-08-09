@@ -17,6 +17,8 @@ Game::Game()
     // colisões do mapa
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso1.txt"), 125, 0);
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso2.txt"), 125, 576);
+    colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco2.txt"), 90, 50);
+    colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco2.txt"), 90, 376);
 
 }
 Game::~Game() {
@@ -83,7 +85,7 @@ void Game::update() {
     static constexpr int FALL_LIMIT = 130;
     if (hero.getPosL() > FALL_LIMIT){
         hero.dead();
-        hero.moveTo(100, 30);
+        hero.moveTo(50, 50);
     }
     // verifica se herói ainda tem vida
     if (!hero.isAlive()){
@@ -94,6 +96,11 @@ void Game::update() {
 
 void Game::render() {
     screen.clear();
+
+    for (auto& c : colisoes) {
+        c.draw(mapa, c.getPosL() - 2, c.getPosC() - 10);
+    }
+
     camera.draw(screen, 0, 0);
 
     int drawL = hero.getPosL() - cameraLin;

@@ -44,11 +44,19 @@ bool InputHandler::handleKey(char key, Hero& hero, const std::vector<ObjetoDeJog
     if (velocidadeX < 0) {
         for (int i = 0; i < (int)std::abs(velocidadeX); ++i) {
             hero.moveLeft(1);
-            // colisão lateral se precisar
-        }
+            for (auto& c : colisoes) {
+                if (hero.colideCom(c)) {
+                    hero.moveRight(1);
+                    break;
+                }        }}
     } else if (velocidadeX > 0) {
         for (int i = 0; i < (int)velocidadeX; ++i) {
             hero.moveRight(1);
+            for (auto& c : colisoes) {
+                if (hero.colideCom(c)) {
+                    hero.moveLeft(1);
+                    break;
+                }        }
             // colisão lateral se precisar
         }
     }
