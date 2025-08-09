@@ -12,6 +12,7 @@
 #include <algorithm> // clamp()
 #include <iostream>
 #include <unistd.h>  // usleep()
+#include <vector> // vector<>
 
 class Game {
 private:
@@ -19,8 +20,7 @@ private:
     static constexpr int CAM_WIDTH = 320;
 
     Sprite mapa;
-    ObjetoDeJogo mapa_colisao;
-    ObjetoDeJogo mapa_colisao2;
+    std::vector<ObjetoDeJogo> colisoes;  // << aqui está o vector
     Sprite sprite_menu;
     SpriteView camera;
     SpriteBuffer screen;
@@ -28,8 +28,7 @@ private:
     InputHandler input;
 
     int cameraLin, cameraCol;
-    bool running;
-    bool menu_running;
+    bool running, menu_running, gameover_running;
 
 
 public:
@@ -41,6 +40,8 @@ public:
     void update();
     void render();
     void run();
+
+    void GameOver();
 };
 
 #endif // GAME_HPP

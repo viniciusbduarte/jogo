@@ -4,8 +4,37 @@
 #include "../../ASCII_Engine/ObjetoDeJogo.hpp"
 
 class Hero : public ObjetoDeJogo {
+private:
+    int hp{100};
+    int lifes{3};
+    bool alive{true};
 public:
     using ObjetoDeJogo::ObjetoDeJogo; // herda o construtor
+
+    inline bool isAlive(){
+        return alive;
+    
+    }
+
+    inline void dead(){
+        lifes--;
+        hp = 100;
+        
+        if (lifes == 0) alive = false;
+
+    }
+
+    inline void damage(){
+        hp -= 20;
+        
+        if (hp <= 0){
+            dead();
+        }
+    }
+
+
+
+
 };
 
 #endif

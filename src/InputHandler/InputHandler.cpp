@@ -10,28 +10,21 @@ char InputHandler::readKey() const {
     return Keyboard::read();
 }
 
-bool InputHandler::handleKey(char key, Hero& hero,
-                             const ObjetoDeJogo& col1,
-                             const ObjetoDeJogo& col2) {
+bool InputHandler::handleKey(char key, Hero& hero, const std::vector<ObjetoDeJogo>& colisoes) {
     if (key == 'q') {
-        return false; // sinaliza pra sair do jogo
+        return false; // encerra o jogo
     }
 
     // Movimento horizontal
-    if (key == 'a') {
-        velocidadeX -= acel;
-    } else if (key == 'd') {
-        velocidadeX += acel;
-    } else {
-        // desaceleração no chão
-        if (noChao) {
-            if (velocidadeX > 0) {
-                velocidadeX -= desacel;
-                if (velocidadeX < 0) velocidadeX = 0;
-            } else if (velocidadeX < 0) {
-                velocidadeX += desacel;
-                if (velocidadeX > 0) velocidadeX = 0;
-            }
+    if (key == 'a') velocidadeX -= acel;
+    else if (key == 'd') velocidadeX += acel;
+    else if (noChao) {
+        if (velocidadeX > 0) {
+            velocidadeX -= desacel;
+            if (velocidadeX < 0) velocidadeX = 0;
+        } else if (velocidadeX < 0) {
+            velocidadeX += desacel;
+            if (velocidadeX > 0) velocidadeX = 0;
         }
     }
 
@@ -43,46 +36,51 @@ bool InputHandler::handleKey(char key, Hero& hero,
         noChao = false;
     }
 
-    // Aplica gravidade
+    // Gravidade
     velY += gravidade;
     velY = std::clamp(velY, -15.0f, 15.0f);
 
-    // Move horizontal pixel a pixel com colisão
+    // Movimento horizontal pixel a pixel
     if (velocidadeX < 0) {
         for (int i = 0; i < (int)std::abs(velocidadeX); ++i) {
             hero.moveLeft(1);
-            // aqui pode colocar colisão lateral se quiser
+            // colisão lateral se precisar
         }
     } else if (velocidadeX > 0) {
         for (int i = 0; i < (int)velocidadeX; ++i) {
             hero.moveRight(1);
-            // aqui pode colocar colisão lateral se quiser
+            // colisão lateral se precisar
         }
     }
 
-    // Move vertical pixel a pixel com colisão
+    // Movimento vertical pixel a pixel
     if (velY < 0) {
         for (int i = 0; i < (int)std::abs(velY); ++i) {
             hero.moveUp(1);
-            if (hero.colideCom(col1) || hero.colideCom(col2)) {
-                hero.moveDown(1);
-                velY = 0;
-                break;
+            for (auto& c : colisoes) {
+                if (hero.colideCom(c)) {
+                    hero.moveDown(1);
+                    velY = 0;
+                    break;
+                }
             }
         }
     } else if (velY > 0) {
         for (int i = 0; i < (int)velY; ++i) {
             hero.moveDown(1);
-            if (hero.colideCom(col1) || hero.colideCom(col2)) {
-                hero.moveUp(1);
-                velY = 0;
-                noChao = true;
-                break;
-            } else {
-                noChao = false;
+            bool tocouChao = false;
+            for (auto& c : colisoes) {
+                if (hero.colideCom(c)) {
+                    hero.moveUp(1);
+                    velY = 0;
+                    noChao = true;
+                    tocouChao = true;
+                    break;
+                }
             }
+            if (!tocouChao) noChao = false;
         }
     }
 
-    return true; // continuar rodando
+    return true;
 }

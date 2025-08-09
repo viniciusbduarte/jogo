@@ -23,10 +23,7 @@ public:
     InputHandler();
 
     char readKey() const;
-    // Retorna false se o jogo deve parar (tecla 'q')
-    bool handleKey(char key, Hero& hero, 
-                   const ObjetoDeJogo& col1, 
-                   const ObjetoDeJogo& col2);
+    bool handleKey(char key, Hero& hero, const std::vector<ObjetoDeJogo>& colisoes);
 };
 
 #endif
