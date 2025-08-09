@@ -3,15 +3,30 @@
 
 #include "../../ASCII_Engine/input/Keyboard.hpp"
 #include "../classes/Hero.hpp"
+#include "../../ASCII_Engine/ObjetoDeJogo.hpp"
+#include <algorithm>
 
 class InputHandler {
 private:
-    int jump{5};
+    bool noChao;
+    float velocidadeX;
+    float velY;
+
+    const float acel = 0.5f;
+    const float desacel = 0.2f;
+    const float velMax = 5.0f;
+
+    const float gravidade = 1.0f;
+    const float forcaPulo = -10.0f;
+
 public:
-    InputHandler(); 
+    InputHandler();
 
     char readKey() const;
-    void handleKey(char key, ObjetoDeJogo& obj) const;
+    // Retorna false se o jogo deve parar (tecla 'q')
+    bool handleKey(char key, Hero& hero, 
+                   const ObjetoDeJogo& col1, 
+                   const ObjetoDeJogo& col2);
 };
 
 #endif

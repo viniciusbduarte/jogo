@@ -9,6 +9,9 @@
 #include "../InputHandler/InputHandler.hpp"
 #include <set>
 #include <cmath>
+#include <algorithm> // clamp()
+#include <iostream>
+#include <unistd.h>  // usleep()
 
 class Game {
 private:
@@ -27,25 +30,12 @@ private:
     int cameraLin, cameraCol;
     bool running;
     bool menu_running;
-    bool pulando;
-    int pulo;
 
-    // Física e movimento
-    std::set<char> teclasPressionadas;
-
-    float velocidadeX = 0.0f;
-    const float acel = 0.5f;
-    const float desacel = 0.2f;
-    const float velMax = 5.0f;
-
-    float velY = 0.0f;
-    const float gravidade = 1.0f;
-    const float forcaPulo = -10.0f;
-
-    bool noChao = true;
 
 public:
     Game();
+    ~Game();
+
     void menu();
     void init();
     void update();
