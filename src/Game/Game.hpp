@@ -6,6 +6,7 @@
 #include "../../ASCII_Engine/ObjetoDeJogo.hpp"
 #include "../../ASCII_Engine/Sprite.hpp"
 #include "../classes/Hero.hpp"
+#include "../classes/Moeda.hpp"
 #include "../InputHandler/InputHandler.hpp"
 #include <set>
 #include <cmath>
@@ -20,11 +21,12 @@ private:
     static constexpr int CAM_WIDTH = 320;
 
     Sprite mapa;
-    std::vector<ObjetoDeJogo> colisoes;  // << aqui está o vector
+    std::vector<ObjetoDeJogo> colisoes; 
     Sprite sprite_menu;
     SpriteView camera;
     SpriteBuffer screen;
     Hero hero;
+    Moeda moeda;
     InputHandler input;
 
     int cameraLin, cameraCol;

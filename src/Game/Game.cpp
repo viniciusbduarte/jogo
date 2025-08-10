@@ -4,6 +4,7 @@ Game::Game()
     : mapa("src/assets/bg.txt"),
       camera(mapa, 0, 0, CAM_HEIGHT, CAM_WIDTH),
       hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14), CAM_HEIGHT / 2, CAM_WIDTH / 2),
+      moeda("Moeda", SpriteAnimado("src/assets/moeda.txt", 10), 65, 70),
       screen(CAM_WIDTH, CAM_HEIGHT, ' '),
       sprite_menu("src/assets/menu.txt"),
       input()
@@ -101,6 +102,8 @@ void Game::render() {
         c.draw(mapa, c.getPosL() - 2, c.getPosC() - 10);
     }
 
+    moeda.draw(mapa, moeda.getPosL(), moeda.getPosC());
+
     camera.draw(screen, 0, 0);
 
     int drawL = hero.getPosL() - cameraLin;
@@ -111,6 +114,7 @@ void Game::render() {
         hero.draw(screen, drawL - 2, drawC - 7);
     }
     hero.update();
+    moeda.update();
     std::cout << "\033[2J\033[H" << screen << std::endl;
 
 }
