@@ -21,6 +21,7 @@ private:
     static constexpr int CAM_WIDTH = 320;
 
     Sprite mapa;
+    Sprite coracao;
     std::vector<ObjetoDeJogo> colisoes; 
     Sprite sprite_menu;
     SpriteView camera;

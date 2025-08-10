@@ -2,6 +2,7 @@
 
 Game::Game()
     : mapa("src/assets/bg.txt"),
+      coracao("src/assets/coracao.txt"),
       camera(mapa, 0, 0, CAM_HEIGHT, CAM_WIDTH),
       hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14), CAM_HEIGHT / 2, CAM_WIDTH / 2),
       moeda("Moeda", SpriteAnimado("src/assets/moeda.txt", 10), 65, 70),
@@ -76,8 +77,8 @@ void Game::update() {
     cameraLin = hero.getPosL() - CAM_HEIGHT / 2;
     cameraCol = hero.getPosC() - CAM_WIDTH / 2;
 
-    cameraLin = std::clamp(cameraLin, 0, mapa.getAltura() - CAM_HEIGHT);
-    cameraCol = std::clamp(cameraCol, 0, mapa.getLarguraMax() - CAM_WIDTH);
+    cameraLin = std::clamp(cameraLin, 3, mapa.getAltura() - CAM_HEIGHT - 3);
+    cameraCol = std::clamp(cameraCol, 3, mapa.getLarguraMax() - CAM_WIDTH - 3);
 
     camera.moveTo(cameraLin, cameraCol);
 
@@ -115,6 +116,13 @@ void Game::render() {
     }
     hero.update();
     moeda.update();
+
+    
+    int vidas = hero.getLifes();
+    if (vidas >= 1) coracao.draw(screen, 5, 260);
+    if (vidas >= 2) coracao.draw(screen, 5, 280);
+    if (vidas >= 3) coracao.draw(screen, 5, 300);
+
     std::cout << "\033[2J\033[H" << screen << std::endl;
 
 }

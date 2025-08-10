@@ -32,7 +32,13 @@ public:
         }
     }
 
+    inline int getLifes(){
+        return lifes;
+    }
 
+    inline int getHP(){
+        return hp;
+    }
 
 
 };
