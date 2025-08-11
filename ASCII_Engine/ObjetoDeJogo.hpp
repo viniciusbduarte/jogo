@@ -41,6 +41,10 @@ public:
 	
 	bool getActive() const { return this->active; }
 	
+	void trocarSprite(const SpriteBase& sprite) {
+		setSprite(sprite.copia());
+	}
+	
 	//RenderBase
 	virtual void init() {};
 	//lembrar de chamar update nas derivadas se elas sobrescreverem
