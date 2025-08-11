@@ -7,7 +7,8 @@ Game::Game()
       barra_vida("src/assets/barra_vida.txt", COR::VERMELHA),
       camera(mapa, 0, 0, CAM_HEIGHT, CAM_WIDTH),
       hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14), 100, 20),
-      moeda("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 75, 70),
+      chave("Chave", SpriteAnimado("src/assets/chave.txt", 14, COR::AMARELA), 27, 305),
+      bau("Baú", Sprite("src/assets/bau_fechado.txt"), 110, 630),
       inimigo("Inimigo", SpriteAnimado("src/assets/inimigo.txt", 16, COR::MARROM), 114, 200),
       screen(CAM_WIDTH, CAM_HEIGHT, ' '),
       sprite_menu("src/assets/menu.txt"),
@@ -19,6 +20,13 @@ Game::Game()
     menu_running = false;
     gameover_running = false;
     move_inimigo = false;
+
+    // moedas
+    moedas.emplace_back("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 77, 70);
+    moedas.emplace_back("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 77, 385);
+    moedas.emplace_back("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 47, 500);
+    moedas.emplace_back("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 112, 150);
+    moedas.emplace_back("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 112, 600);
 
     // colisões do mapa
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso1.txt"), 125, 0);
@@ -40,13 +48,19 @@ void Game::init() {
 
 void Game::GameOver() {
     // Reinicia o herói
-    hero = Hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14),
-                CAM_HEIGHT / 2, CAM_WIDTH / 2);
+    hero = Hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14), 100, 20);
 
     // Reinicia a câmera
     cameraLin = 0;
     cameraCol = 0;
     camera.moveTo(cameraLin, cameraCol);
+
+    for (auto& moeda : moedas) {
+
+        moeda.ativarObj();
+
+    }
+
 
     // Volta ao menu
     menu_running = true;
@@ -78,7 +92,6 @@ void Game::update() {
     if (!input.handleKey(key, hero, colisoes)) {
         running = false;
     }
-
 
     // Atualiza câmera para acompanhar o herói
     cameraLin = hero.getPosL() - CAM_HEIGHT / 2;
@@ -129,69 +142,80 @@ void Game::update() {
         GameOver();
     }
 
+    //verifica se o herói pegou a chave
+    if(hero.colideCom(chave)){
+        chave.desativarObj();
+        hero.pegouChave();
+    }
+
+    /*if(hero.colideCom(bau) && hero.isKey()){
+        bau.
+    }
+*/
+    for (auto& moeda : moedas) {
+        if (hero.colideCom(moeda)) {
+            moeda.desativarObj();
+        }
+        moeda.update();
+    }
+    inimigo.update();
+    chave.update();
+    bau.update();
+    hero.update();
+
 }
 
 void Game::render() {
     screen.clear();
 
+    auto drawIfVisible = [&](auto& obj, int offsetL = 0, int offsetC = 0) {
+        int screenL = obj.getPosL() - cameraLin;
+        int screenC = obj.getPosC() - cameraCol;
+
+        if (screenL >= 0 && screenL < CAM_HEIGHT &&
+            screenC >= 0 && screenC < CAM_WIDTH) {
+            obj.draw(screen, screenL + offsetL, screenC + offsetC);
+        }
+    };
+
+    // Colisões (desenhadas diretamente no mapa, sem offset de câmera)
     for (auto& c : colisoes) {
         c.draw(mapa, c.getPosL() - 2, c.getPosC() - 10);
     }
 
+    // Mapa/câmera
     camera.draw(screen, 0, 0);
 
-    int moedaScreenL = moeda.getPosL() - cameraLin;
-    int moedaScreenC = moeda.getPosC() - cameraCol;
-
-    if (moedaScreenL >= 0 && moedaScreenL < CAM_HEIGHT &&
-        moedaScreenC >= 0 && moedaScreenC < CAM_WIDTH) {
-        moeda.draw(screen, moedaScreenL, moedaScreenC);
+    // Objetos
+    drawIfVisible(chave);
+    drawIfVisible(bau);
+    drawIfVisible(inimigo, 0, -8);
+    drawIfVisible(hero, -2, -7);
+    for (auto& moeda : moedas) {
+        drawIfVisible(moeda);
     }
 
-    int inimigoScreenL = inimigo.getPosL() - cameraLin;
-    int inimigoScreenC = inimigo.getPosC() - cameraCol;
-
-    if (inimigoScreenL >= 0 && inimigoScreenL < CAM_HEIGHT &&
-        inimigoScreenC >= 0 && inimigoScreenC < CAM_WIDTH) {
-        inimigo.draw(screen, inimigoScreenL, inimigoScreenC - 8);
-    }
-
-    int drawL = hero.getPosL() - cameraLin;
-    int drawC = hero.getPosC() - cameraCol;
-
-    if (drawL >= 0 && drawL < CAM_HEIGHT &&
-        drawC >= 0 && drawC < CAM_WIDTH) {
-        hero.draw(screen, drawL - 2, drawC - 7);
-    }
-
-
-    hero.update();
-    moeda.update();
-    inimigo.update();
-
-    
+    // HUD - Vidas
     int vidas = hero.getLifes();
     if (vidas >= 1) coracao.draw(screen, 5, 260);
     if (vidas >= 2) coracao.draw(screen, 5, 280);
     if (vidas >= 3) coracao.draw(screen, 5, 300);
 
-
+    // HUD - Barra de vida
     vida.draw(screen, 3, 5);
-
     int HP = hero.getHP();
-
-    int baseX = 23;      // posição fixa inicial
-    int spriteWidth = 6; // largura de cada barra
-    int numBarras = HP / 10; // quantidade de barras para desenhar
+    int baseX = 23;      
+    int spriteWidth = 6;
+    int numBarras = HP / 10;
 
     for (int i = 0; i < numBarras; ++i) {
-        barra_vida.draw(screen, 7, baseX + i * (spriteWidth + 1)); // +1 para espaçamento
+        barra_vida.draw(screen, 7, baseX + i * (spriteWidth + 1));
     }
 
-
+    // Output final
     std::cout << "\033[2J\033[H" << screen << std::endl;
-
 }
+
 
 void Game::run() {
     while (true) {

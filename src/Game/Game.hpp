@@ -8,6 +8,8 @@
 #include "../classes/Hero.hpp"
 #include "../classes/Moeda.hpp"
 #include "../classes/Inimigo.hpp"
+#include "../classes/Chest.hpp"
+#include "../classes/Chave.hpp"
 #include "../InputHandler/InputHandler.hpp"
 #include <set>
 #include <cmath>
@@ -26,11 +28,13 @@ private:
     Sprite vida;
     Sprite barra_vida;
     std::vector<ObjetoDeJogo> colisoes; 
+    std::vector<ObjetoDeJogo> moedas; 
+    Chave chave;
+    Chest bau;
     Sprite sprite_menu;
     SpriteView camera;
     SpriteBuffer screen;
     Hero hero;
-    Moeda moeda;
     Inimigo inimigo;
     InputHandler input;
 

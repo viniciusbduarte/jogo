@@ -8,6 +8,7 @@ private:
     int hp{100};
     int lifes{3};
     bool alive{true};
+    bool chave{false};
 public:
     using ObjetoDeJogo::ObjetoDeJogo; // herda o construtor
 
@@ -40,6 +41,14 @@ public:
         return hp;
     }
 
+
+    inline void pegouChave(){
+        chave = true;
+    }
+
+    inline bool isKey(){
+        return chave;
+    }
 
 };
 
