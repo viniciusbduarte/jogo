@@ -2,11 +2,13 @@
 
 Game::Game()
     : mapa("src/assets/bg.txt"),
-      coracao("src/assets/coracao.txt"),
+      coracao("src/assets/coracao.txt", COR::VERMELHA),
+      vida("src/assets/vida_template.txt", COR::CINZA),
+      barra_vida("src/assets/barra_vida.txt", COR::VERMELHA),
       camera(mapa, 0, 0, CAM_HEIGHT, CAM_WIDTH),
-      hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14), CAM_HEIGHT / 2, CAM_WIDTH / 2),
-      moeda("Moeda", SpriteAnimado("src/assets/moeda.txt", 10), 75, 70),
-      inimigo("Inimigo", SpriteAnimado("src/assets/inimigo.txt", 16), 114, 200),
+      hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14), 100, 20),
+      moeda("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 75, 70),
+      inimigo("Inimigo", SpriteAnimado("src/assets/inimigo.txt", 16, COR::MARROM), 114, 200),
       screen(CAM_WIDTH, CAM_HEIGHT, ' '),
       sprite_menu("src/assets/menu.txt"),
       input()
@@ -16,11 +18,15 @@ Game::Game()
     running = false;
     menu_running = false;
     gameover_running = false;
+    move_inimigo = false;
 
     // colisões do mapa
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso1.txt"), 125, 0);
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso2.txt"), 125, 576);
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco2.txt"), 90, 50);
+    colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco1.txt"), 60, 200);
+    colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco1.txt"), 40, 300);
+    colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco1.txt"), 60, 490);
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco2.txt"), 90, 376);
 
 }
@@ -83,6 +89,34 @@ void Game::update() {
 
     camera.moveTo(cameraLin, cameraCol);
 
+    if(inimigo.getPosC() == 5){
+        move_inimigo = false;
+    }
+    else if(inimigo.getPosC() == 350 ){
+        move_inimigo = true;
+    }
+
+
+    if (move_inimigo)inimigo.moveLeft(1);
+    if (!move_inimigo)inimigo.moveRight(1);
+
+    // variáveis estáticas para manter estado entre frames
+    static bool podeLevarDano = true;
+    static int danoCooldown = 0; // contador em frames
+
+    // verifica colisão com inimigo
+    if (hero.colideCom(inimigo) && podeLevarDano) {
+        hero.damage();
+        podeLevarDano = false;
+        danoCooldown = 60; // delay de 60 frames (~1 segundo a 60 FPS)
+    }
+
+    // controla o cooldown
+    if (!podeLevarDano) {
+        if (--danoCooldown <= 0) {
+            podeLevarDano = true;
+        }
+    }
 
     // se o herói cair no buraco ele morre 
     static constexpr int FALL_LIMIT = 130;
@@ -119,7 +153,7 @@ void Game::render() {
 
     if (inimigoScreenL >= 0 && inimigoScreenL < CAM_HEIGHT &&
         inimigoScreenC >= 0 && inimigoScreenC < CAM_WIDTH) {
-        inimigo.draw(screen, inimigoScreenL, inimigoScreenC);
+        inimigo.draw(screen, inimigoScreenL, inimigoScreenC - 8);
     }
 
     int drawL = hero.getPosL() - cameraLin;
@@ -140,6 +174,20 @@ void Game::render() {
     if (vidas >= 1) coracao.draw(screen, 5, 260);
     if (vidas >= 2) coracao.draw(screen, 5, 280);
     if (vidas >= 3) coracao.draw(screen, 5, 300);
+
+
+    vida.draw(screen, 3, 5);
+
+    int HP = hero.getHP();
+
+    int baseX = 23;      // posição fixa inicial
+    int spriteWidth = 6; // largura de cada barra
+    int numBarras = HP / 10; // quantidade de barras para desenhar
+
+    for (int i = 0; i < numBarras; ++i) {
+        barra_vida.draw(screen, 7, baseX + i * (spriteWidth + 1)); // +1 para espaçamento
+    }
+
 
     std::cout << "\033[2J\033[H" << screen << std::endl;
 

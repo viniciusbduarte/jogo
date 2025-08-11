@@ -23,6 +23,8 @@ private:
 
     Sprite mapa;
     Sprite coracao;
+    Sprite vida;
+    Sprite barra_vida;
     std::vector<ObjetoDeJogo> colisoes; 
     Sprite sprite_menu;
     SpriteView camera;
@@ -33,7 +35,7 @@ private:
     InputHandler input;
 
     int cameraLin, cameraCol;
-    bool running, menu_running, gameover_running;
+    bool running, menu_running, gameover_running, move_inimigo;
 
 
 public:
