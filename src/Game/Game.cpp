@@ -6,6 +6,7 @@ Game::Game()
       camera(mapa, 0, 0, CAM_HEIGHT, CAM_WIDTH),
       hero("Hero", SpriteAnimado("src/assets/hero2.txt", 14), CAM_HEIGHT / 2, CAM_WIDTH / 2),
       moeda("Moeda", SpriteAnimado("src/assets/moeda.txt", 10), 75, 70),
+      inimigo("Inimigo", SpriteAnimado("src/assets/inimigo.txt", 16), 114, 200),
       screen(CAM_WIDTH, CAM_HEIGHT, ' '),
       sprite_menu("src/assets/menu.txt"),
       input()
@@ -113,6 +114,14 @@ void Game::render() {
         moeda.draw(screen, moedaScreenL, moedaScreenC);
     }
 
+    int inimigoScreenL = inimigo.getPosL() - cameraLin;
+    int inimigoScreenC = inimigo.getPosC() - cameraCol;
+
+    if (inimigoScreenL >= 0 && inimigoScreenL < CAM_HEIGHT &&
+        inimigoScreenC >= 0 && inimigoScreenC < CAM_WIDTH) {
+        inimigo.draw(screen, inimigoScreenL, inimigoScreenC);
+    }
+
     int drawL = hero.getPosL() - cameraLin;
     int drawC = hero.getPosC() - cameraCol;
 
@@ -120,8 +129,11 @@ void Game::render() {
         drawC >= 0 && drawC < CAM_WIDTH) {
         hero.draw(screen, drawL - 2, drawC - 7);
     }
+
+
     hero.update();
     moeda.update();
+    inimigo.update();
 
     
     int vidas = hero.getLifes();

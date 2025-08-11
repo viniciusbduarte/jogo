@@ -7,6 +7,7 @@
 #include "../../ASCII_Engine/Sprite.hpp"
 #include "../classes/Hero.hpp"
 #include "../classes/Moeda.hpp"
+#include "../classes/Inimigo.hpp"
 #include "../InputHandler/InputHandler.hpp"
 #include <set>
 #include <cmath>
@@ -28,6 +29,7 @@ private:
     SpriteBuffer screen;
     Hero hero;
     Moeda moeda;
+    Inimigo inimigo;
     InputHandler input;
 
     int cameraLin, cameraCol;
