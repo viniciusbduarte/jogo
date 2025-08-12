@@ -3,6 +3,7 @@
 Game::Game()
     : mapa("src/assets/bg.txt"),
       coracao("src/assets/coracao.txt", COR::VERMELHA),
+      bau_aberto("src/assets/bau_aberto.txt", COR::AMARELA),
       vida("src/assets/vida_template.txt", COR::CINZA),
       barra_vida("src/assets/barra_vida.txt", COR::VERMELHA),
       camera(mapa, 0, 0, CAM_HEIGHT, CAM_WIDTH),
@@ -29,7 +30,7 @@ Game::Game()
     moedas.emplace_back("Moeda", SpriteAnimado("src/assets/moeda.txt", 10, COR::AMARELA), 112, 600);
 
     // colisões do mapa
-    colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso1.txt"), 125, 0);
+    colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso1.txt"), 125, 4);
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/colide_piso2.txt"), 125, 576);
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco2.txt"), 90, 50);
     colisoes.emplace_back("Colisao do mapa", Sprite("src/assets/bloco1.txt"), 60, 200);
@@ -148,10 +149,11 @@ void Game::update() {
         hero.pegouChave();
     }
 
-    /*if(hero.colideCom(bau) && hero.isKey()){
-        bau.
+    
+    if(hero.colideCom(bau) && hero.isKey()){
+        bau.trocarSprite(bau_aberto);
     }
-*/
+
     for (auto& moeda : moedas) {
         if (hero.colideCom(moeda)) {
             moeda.desativarObj();
@@ -171,20 +173,18 @@ void Game::render() {
     auto drawIfVisible = [&](auto& obj, int offsetL = 0, int offsetC = 0) {
         int screenL = obj.getPosL() - cameraLin;
         int screenC = obj.getPosC() - cameraCol;
-
-        if (screenL >= 0 && screenL < CAM_HEIGHT &&
-            screenC >= 0 && screenC < CAM_WIDTH) {
-            obj.draw(screen, screenL + offsetL, screenC + offsetC);
-        }
+        obj.draw(screen, screenL + offsetL, screenC + offsetC);
+        
     };
-
-    // Colisões (desenhadas diretamente no mapa, sem offset de câmera)
-    for (auto& c : colisoes) {
-        c.draw(mapa, c.getPosL() - 2, c.getPosC() - 10);
-    }
 
     // Mapa/câmera
     camera.draw(screen, 0, 0);
+    
+    // Colisões (desenhadas diretamente no mapa, sem offset de câmera)
+    for (auto& c : colisoes) {
+        drawIfVisible(c, -2, - 10);
+        //c.draw(mapa, c.getPosL() - 2, c.getPosC() - 10);
+    }
 
     // Objetos
     drawIfVisible(chave);

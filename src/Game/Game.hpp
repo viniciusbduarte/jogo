@@ -27,6 +27,7 @@ private:
     Sprite coracao;
     Sprite vida;
     Sprite barra_vida;
+    Sprite bau_aberto;
     std::vector<ObjetoDeJogo> colisoes; 
     std::vector<ObjetoDeJogo> moedas; 
     Chave chave;
